@@ -1,0 +1,51 @@
+
+body {
+  font-family: sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+.answer a {
+  padding: 5px;
+  color: white;
+}
+
+#very-disagree {
+  background-color: #a00;
+}
+
+#disagree {
+  background-color: #a50;
+}
+
+#neither {
+  background-color: #aa0;
+}
+
+#agree {
+  background-color: #5a0;
+}
+
+#very-agree {
+  background-color: #0a0;
+}
+
+.num {
+  text-align: right;
+}
+
+#result-facets td {
+  padding: 5px;
+}
+
+.faint {
+  color: #555;
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.6em;
+}
+

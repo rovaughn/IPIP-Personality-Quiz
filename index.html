@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IPIP Personality Test</title>
+  <link rel="stylesheet" type="text/css" href="main.css">
+</head>
+<body>
+  <h1>IPIP Personality Test</h1>
+  <p>Welcome to the IPIP personality test.  This test is widely recommended by psychologists, and is based on five main traits of human personality (OCEAN): openness, conscientiousness, extraversion, agreeableness, and neuroticism.  It also considers facets of these different aspects.</p>
+  <p>There are 300 questions in this test.  The site will ask you one at a time.  At any time, you can see your results so far.  The more questions you answer, the more accurate your results will be.</p>
+  <p>Answers are selected on a scale of "Absolutely disagree" (left side of the spectrum), to "Absolutely agree" (right side of the spectrum).  The middle represents, "Neither agree nor disagree."  Simply click on the spectrum in the spot you think best represents your stance.</p>
+  <p>Note that this quiz will NOT store your progress or results.  You have to do that yourself.</p>
+  <p>The results table will show the traits that your personality seems to have, based on your answers.  Traits at the top are farthest from average, and will influence your personality more than traits beneath them.</p>
+  <p>Near the bottom is a block of words that summarize the results of your personality.  Similarly to the table, words near the beginning of the block are considered more significant to your personality than words that come later.  Words will appear for a trait if it is farther than 17.5% away from zero.</p>
+  <hr>
+  <p><span id="completed"></span> of 300 questions answered</p>
+  <p id="question"></p>
+  <div id="answer" style="cursor:pointer;width:200px;height:50px;background: url('spectrum.png');"></div>
+  <hr>
+  <table id="result-facets">
+  </table>
+  <hr>
+  <p id="result-words"></p>
+  <script type="text/javascript" src="questions.js"></script>
+  <script type="text/javascript" src="words.js"></script>
+  <script type="text/javascript" src="quiz.js"></script>
+</body>
+</html>
