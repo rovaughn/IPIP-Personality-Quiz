@@ -41,7 +41,9 @@ function answerQuestion (answer) {
 }
 
 function arrangeQuestions (questions, facets) {
-  var result = [];
+  var result = []
+    , aspects = {openness: false, conscientiousness: false, extraversion: false, agreeableness: false, neuroticism: false}
+    , aspectsAnswered = 0;
   
   var answeredHere = 0;
   
@@ -53,11 +55,21 @@ function arrangeQuestions (questions, facets) {
     for (var i = 0; i < questions.length; ++i) {
       var question = questions[i];
       
-      if (!facets[question.facet]) {
+      if (!facets[question.facet] && !aspects[question.aspect]) {
+        aspects[question.aspect] = true;
         facets[question.facet] = true;
         result.push(question);
         questions.splice(i, 1);
         i -= 1;
+        aspectsAnswered += 1;
+      }
+      
+      if (aspectsAnswered >= 5) {
+        for (var k in aspects) {
+          aspects[k] = false;
+        }
+        
+        aspectsAnswered = 0;
       }
     }
   }
@@ -79,6 +91,13 @@ function begin () {
     
     if (!SCORES[facet])  SCORES[facet]  = [];
     if (!SCORES[aspect]) SCORES[aspect] = [];
+  }
+  
+  for (var k in WORDS) {
+    var words = WORDS[k];
+    
+    words.lo = words.lo.split(', ');
+    words.hi = words.hi.split(', ');
   }
   
   QUESTIONS = arrangeQuestions(QUESTIONS, facets);
@@ -110,6 +129,24 @@ function confidence (n) {
   return (1 + Z2/(2*n) - Z*Math.sqrt(Z2/(4*n*n))) / (1 + Z2/n);
 }
 
+function addWords (words, added) {
+  var la = added.length
+    , lw = words.length;
+  for (var i = 0; i < la; ++i) {
+    var present = false
+      , add     = added[i];
+    
+    for (var j = 0; j < lw; ++j) {
+      if (words[j] == add) {
+        present = true;
+        break;
+      }
+    }
+    
+    if (!present) words.push(add);
+  }
+}
+
 function buildResults () {
   var facets = [];
   
@@ -136,9 +173,9 @@ function buildResults () {
     tableHTML += '<tr><td>' + name + '</td><td class="num">' + shown + '%</td><td class="faint">based on</td><td class="num">' + count + '</td><td class="faint">questions</td></tr>';
     
     if (value >= 0.175) {
-      words.push(WORDS[name]['hi']);
+      addWords(words, WORDS[name]['hi']);
     } else if (value <= -0.175) {
-      words.push(WORDS[name]['lo']);
+      addWords(words, WORDS[name]['lo']);
     }
   }
   
