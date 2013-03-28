@@ -40,7 +40,34 @@ function answerQuestion (answer) {
   askQuestion();
 }
 
+function arrangeQuestions (questions, facets) {
+  var result = [];
+  
+  var answeredHere = 0;
+  
+  while (questions.length > 0) {
+    for (var k in facets) {
+      facets[k] = false;
+    }
+    
+    for (var i = 0; i < questions.length; ++i) {
+      var question = questions[i];
+      
+      if (!facets[question.facet]) {
+        facets[question.facet] = true;
+        result.push(question);
+        questions.splice(i, 1);
+        i -= 1;
+      }
+    }
+  }
+  
+  return result;
+}
+
 function begin () {
+  var facets = {};
+  
   shuffle(QUESTIONS);
   
   for (var i = 0; i < NUM_QUESTIONS; ++i) {
@@ -48,9 +75,13 @@ function begin () {
       , facet    = question.facet
       , aspect   = question.aspect;
     
+    facets[facet] = false;
+    
     if (!SCORES[facet])  SCORES[facet]  = [];
     if (!SCORES[aspect]) SCORES[aspect] = [];
   }
+  
+  QUESTIONS = arrangeQuestions(QUESTIONS, facets);
   
   CURRENT_QUESTION = 0;
   askQuestion();
