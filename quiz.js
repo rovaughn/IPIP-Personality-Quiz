@@ -155,7 +155,7 @@ function makeScore (answers) {
     count += 1;
   }
   
-  return (total / count) * confidence(count);
+  return (total / count);
 }
 
 var Z  = 1.96
