@@ -1,10 +1,12 @@
-var NUM_QUESTIONS    = QUESTIONS.length
+var NUM_QUESTIONS    = QUESTION_SET.length
+  , QUESTIONS        = null
   , elem_question    = $('#question')
   , elem_completed   = $('#completed')
   , elem_facets      = $('#result-facets')
   , elem_words       = $('#result-words')
   , CURRENT_QUESTION = 0
-  , SCORES           = {};
+  , SCORES           = {}
+  , QUESTION_ORDER   = [];
 
 function shuffle (a) {
   for (var j, x, i = a.length; i; j = parseInt(Math.random() * i), x = a[--i], a[i] = a[j], a[j] = x);
@@ -14,7 +16,10 @@ function shuffle (a) {
 function askQuestion () {
   elem_completed.text(CURRENT_QUESTION);
   
-  if (CURRENT_QUESTION >= NUM_QUESTIONS) return;
+  if (CURRENT_QUESTION >= NUM_QUESTIONS) {
+    elem_question.text('THE QUIZ HAS COMPLETED.');
+    return;
+  }
   
   elem_question.text(QUESTIONS[CURRENT_QUESTION].question);
 }
@@ -80,9 +85,11 @@ function arrangeQuestions (questions, facets) {
 function begin () {
   var facets = {};
   
+  QUESTIONS = QUESTION_SET.slice(0);
+  
   shuffle(QUESTIONS);
   
-  for (var i = 0; i < NUM_QUESTIONS; ++i) {
+  for (var i = 0; i < QUESTIONS.length; ++i) {
     var question = QUESTIONS[i]
       , facet    = question.facet
       , aspect   = question.aspect;
@@ -102,8 +109,39 @@ function begin () {
   
   QUESTIONS = arrangeQuestions(QUESTIONS, facets);
   
+  for (var i = 0; i < QUESTIONS.length; ++i) {
+    QUESTION_ORDER.push(+QUESTIONS[i].index);
+  }
+  
   CURRENT_QUESTION = 0;
   askQuestion();
+}
+
+function beginFrom (datastr) {
+  var data             = JSON.parse(datastr)
+    , question_order   = data.question_order
+    , scores           = data.scores
+    , current_question = data.current_question;
+  
+  QUESTIONS = [];
+  
+  for (var i = 0; i < question_order.length; ++i) {
+    QUESTIONS.push(QUESTION_SET[question_order[i]]);
+  }
+  
+  SCORES           = scores;
+  CURRENT_QUESTION = current_question;
+  QUESTION_ORDER   = question_order;
+  
+  buildResults();
+  askQuestion();
+}
+
+function showProgress () {
+  return JSON.stringify({
+    question_order: QUESTION_ORDER, scores: SCORES,
+    current_question: CURRENT_QUESTION
+  });
 }
 
 function makeScore (answers) {
@@ -186,6 +224,14 @@ function buildResults () {
 $('#answer').click(function(e){
   console.log('clicked', e.clientX);
   answerQuestion((e.clientX - 100) / 100);
+});
+
+$('#save-progress').click(function(e){
+  $('#progress-box').val(showProgress());
+});
+
+$('#load-progress').click(function(e){
+  beginFrom($('#progress-box').val());
 });
 
 begin();

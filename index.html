@@ -8,8 +8,8 @@
   <h1>IPIP Personality Test</h1>
   <p>Welcome to the IPIP personality test.  This test is widely recommended by psychologists, and is based on five main traits of human personality (OCEAN): openness, conscientiousness, extraversion, agreeableness, and neuroticism.  It also considers facets of these different aspects.</p>
   <p>There are 300 questions in this test.  The site will ask you one at a time.  The results will update as you go, so you can stop and copy the results at any time.  The more questions you answer, the more accurate your results will be.  The quiz distributes the questions so that a well-distributed variety of questions will be asked, even if not many have been answered, so short sessions should still be accurate.</p>
-  <p>Answers are selected on a scale of "Absolutely disagree" (left side of the spectrum), to "Absolutely agree" (right side of the spectrum).  The middle represents, "Neither agree nor disagree."  Simply click on the spectrum in the spot you think best represents your stance.</p>
-  <p>Note that this quiz will NOT store your progress or results.  You have to do that yourself.</p>
+  <p>Answers are selected on a scale of &#8220;Absolutely disagree&#8221; (left side of the spectrum), to &#8220;Absolutely agree&#8221; (right side of the spectrum).  The middle represents, &#8220;Neither agree nor disagree.&#8221;  Simply click on the spectrum in the spot you think best represents your stance.</p>
+  <p>This quiz provides the ability to save your progress and resume a session.  Near the bottom of the page are two buttons: &#8220;Save progress&#8221; and &#8220;Load progress.&#8221;  Press &#8220;Save progress&#8221; to fill the text box with your progress.  Copy and save all of the text in order to use it later.  When you wish to resume your session at any other time, paste your text into the same box, and press &#8220;Load progress.&#8221;</p>
   <p>The results table will show the traits that your personality seems to have, based on your answers.  Traits at the top are farthest from average, and will influence your personality more than traits beneath them.</p>
   <p>Near the bottom is a block of words that summarize the results of your personality.  Similarly to the table, words near the beginning of the block are considered more significant to your personality than words that come later.  Words will appear for a trait if it is farther than 17.5% away from zero.</p>
   <hr>
@@ -21,6 +21,9 @@
   </table>
   <hr>
   <p id="result-words"></p>
+  <hr>
+  <p><input id="save-progress" type="button" value="Save progress"> <input id="load-progress" type="button" value="Load progress"></p>
+  <p><textarea id="progress-box" cols="50" rows="4"></textarea></p>
   <script type="text/javascript" src="jquery.js"></script>
   <script type="text/javascript" src="questions.js"></script>
   <script type="text/javascript" src="words.js"></script>
