@@ -1,8 +1,8 @@
 var NUM_QUESTIONS    = QUESTIONS.length
-  , elem_question    = document.getElementById('question')
-  , elem_completed   = document.getElementById('completed')
-  , elem_facets      = document.getElementById('result-facets')
-  , elem_words       = document.getElementById('result-words')
+  , elem_question    = $('#question')
+  , elem_completed   = $('#completed')
+  , elem_facets      = $('#result-facets')
+  , elem_words       = $('#result-words')
   , CURRENT_QUESTION = 0
   , SCORES           = {};
 
@@ -12,11 +12,11 @@ function shuffle (a) {
 }
 
 function askQuestion () {
-  elem_completed.innerText = CURRENT_QUESTION;
+  elem_completed.text(CURRENT_QUESTION);
   
   if (CURRENT_QUESTION >= NUM_QUESTIONS) return;
   
-  elem_question.innerText = QUESTIONS[CURRENT_QUESTION].question;
+  elem_question.text(QUESTIONS[CURRENT_QUESTION].question);
 }
 
 function answerQuestion (answer) {
@@ -111,12 +111,13 @@ function buildResults () {
     }
   }
   
-  elem_facets.innerHTML = tableHTML;
-  elem_words.innerText  = words.join(', ');
+  elem_facets.html(tableHTML);
+  elem_words.text(words.join(', '));
 }
 
-document.getElementById('answer').onclick = function(e){
-  answerQuestion((e.x - 100) / 100);
-};
+$('#answer').click(function(e){
+  console.log('clicked', e.clientX);
+  answerQuestion((e.clientX - 100) / 100);
+});
 
 begin();
