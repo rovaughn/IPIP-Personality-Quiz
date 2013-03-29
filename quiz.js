@@ -227,7 +227,7 @@ $('#answer').click(function(e){
 });
 
 $('#save-progress').click(function(e){
-  $('#progress-box').val(showProgress());
+  $('#progress-box').val(showProgress()).select();
 });
 
 $('#load-progress').click(function(e){
