@@ -1,12 +1,13 @@
-var NUM_QUESTIONS    = QUESTION_SET.length
-  , QUESTIONS        = null
-  , elem_question    = $('#question')
-  , elem_completed   = $('#completed')
-  , elem_facets      = $('#result-facets')
-  , elem_words       = $('#result-words')
-  , CURRENT_QUESTION = 0
-  , SCORES           = {}
-  , QUESTION_ORDER   = [];
+var NUM_QUESTIONS      = QUESTION_SET.length
+  , QUESTIONS          = null
+  , elem_question      = $('#question')
+  , elem_completed     = $('#completed')
+  , elem_facets        = $('#result-facets')
+  , elem_words         = $('#result-words')
+  , CURRENT_QUESTION   = 0
+  , SCORES             = {}
+  , QUESTION_ORDER     = []
+  , PREVIOUS_QUESTIONS = [];
 
 function shuffle (a) {
   for (var j, x, i = a.length; i; j = parseInt(Math.random() * i), x = a[--i], a[i] = a[j], a[j] = x);
@@ -40,9 +41,29 @@ function answerQuestion (answer) {
   
   buildResults();
   
+  PREVIOUS_QUESTIONS.push([aspect, facet]);
+  
   CURRENT_QUESTION += 1;
   
   askQuestion();
+}
+
+function undoAnswer () {
+  var previousQuestion = PREVIOUS_QUESTIONS.pop();
+  
+  if (previousQuestion) {
+    var previousAspect = previousQuestion[0]
+      , previousFacet  = previousQuestion[1];
+    
+    SCORES[previousAspect].pop();
+    SCORES[previousFacet].pop();
+    
+    buildResults();
+    
+    CURRENT_QUESTION -= 1;
+    
+    askQuestion();
+  }
 }
 
 function arrangeQuestions (questions, facets) {
@@ -232,6 +253,10 @@ $('#save-progress').click(function(e){
 
 $('#load-progress').click(function(e){
   beginFrom($('#progress-box').val());
+});
+
+$('#undo-button').click(function(e){
+  undoAnswer();
 });
 
 begin();
