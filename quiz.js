@@ -241,7 +241,13 @@ function buildResults () {
     
     odd = !odd;
     
-    tableHTML += '<td>' + name + '</td><td class="num">' + shown + '%</td><td class="faint">based on</td><td class="num">' + count + '</td><td class="faint">questions</td></tr>';
+    var shownName = name;
+    
+    if (name == 'openness' || name == 'conscientousness' || name == 'extraversion' || name == 'assertiveness' || name == 'neuroticism') {
+      shownName = '<strong>' + name + '</strong>';
+    }
+    
+    tableHTML += '<td>' + shownName + '</td><td class="num">' + shown + '%</td><td class="faint">based on</td><td class="num">' + count + '</td><td class="faint">questions</td></tr>';
     
     if (value >= 0.175) {
       addWords(words, WORDS[name]['hi']);
