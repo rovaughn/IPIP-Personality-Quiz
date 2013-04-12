@@ -135,6 +135,7 @@ function begin () {
   }
   
   CURRENT_QUESTION = 0;
+  buildResults();
   askQuestion();
 }
 
@@ -257,6 +258,10 @@ $('#load-progress').click(function(e){
 
 $('#undo-button').click(function(e){
   undoAnswer();
+});
+
+$('#results-toggle').click(function(e){
+  $('#all-results').toggle();
 });
 
 begin();
