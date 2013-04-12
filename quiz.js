@@ -246,8 +246,7 @@ function buildResults () {
 }
 
 $('#answer').click(function(e){
-  console.log('clicked', e.clientX);
-  answerQuestion((e.clientX - 100) / 100);
+  answerQuestion(2 * ((e.clientX - 8) / (207 - 8) - 0.5));
 });
 
 $('#save-progress').click(function(e){
