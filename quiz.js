@@ -103,18 +103,10 @@ function arrangeQuestions (questions, facets) {
   return result;
 }
 
-function handleHash () {
-  var hash = window.location.hash.substring(1);
-  
-  if (hash == 'hide') {
-    $('#all-results').toggle();
-  }
-}
-
 function begin () {
   var facets = {};
   
-  handleHash();
+  $('#all-results').toggle();
   
   QUESTIONS = QUESTION_SET.slice(0);
   
