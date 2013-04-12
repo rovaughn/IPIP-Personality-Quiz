@@ -3,8 +3,21 @@ body {
   font-family: sans-serif;
 }
 
+.odd-row {
+  background-color: #dedede;
+}
+
+table {
+  border-collapse: collapse;
+}
+
 a {
   text-decoration: none;
+}
+
+.main {
+  width: 650px;
+  margin: auto;
 }
 
 .answer a {
@@ -37,7 +50,7 @@ a {
 }
 
 #result-facets td {
-  padding: 5px;
+  padding: 7px;
 }
 
 .faint {
@@ -48,4 +61,3 @@ p {
   font-size: 16px;
   line-height: 1.6em;
 }
-

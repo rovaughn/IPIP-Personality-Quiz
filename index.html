@@ -5,6 +5,7 @@
   <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 <body>
+  <div class="main">
   <h1>IPIP Personality Test</h1>
   <p>Welcome to the IPIP personality test.  This test is widely recommended by psychologists, and is based on five main traits of human personality (OCEAN): openness, conscientiousness, extraversion, agreeableness, and neuroticism.  It also considers facets of these different aspects.</p>
   <p>There are 300 questions in this test.  The site will ask you one at a time.  The results will update as you go, so you can stop and copy the results at any time.  The more questions you answer, the more accurate your results will be.  The quiz distributes the questions so that a well-distributed variety of questions will be asked, even if not many have been answered, so short sessions should still be accurate.</p>
@@ -29,7 +30,7 @@
   <p><input type="button" id="results-toggle" value="Hide/show results"></p>
   <div id="all-results">
     <hr>
-    <table id="result-facets">
+    <table id="result-facets" class="result-facets">
     </table>
     <hr>
     <p id="result-words"></p>
@@ -37,6 +38,7 @@
   <hr>
   <p><input id="save-progress" type="button" value="Save progress"> <input id="load-progress" type="button" value="Load progress"></p>
   <p><textarea id="progress-box" cols="50" rows="4"></textarea></p>
+  </div>
   <script type="text/javascript" src="jquery.js"></script>
   <script type="text/javascript" src="questions.js"></script>
   <script type="text/javascript" src="words.js"></script>

@@ -223,7 +223,8 @@ function buildResults () {
   facets.sort(function(a,b){return Math.abs(b[2]) - Math.abs(a[2]);});
   
   var tableHTML = ''
-    , words     = [];
+    , words     = []
+    , odd       = true;
   
   for (var i = 0; i < facets.length; ++i) {
     var facet = facets[i]
@@ -232,7 +233,15 @@ function buildResults () {
       , value = facet[2]
       , shown = Math.round(value * 100);
     
-    tableHTML += '<tr><td>' + name + '</td><td class="num">' + shown + '%</td><td class="faint">based on</td><td class="num">' + count + '</td><td class="faint">questions</td></tr>';
+    if (odd) {
+      tableHTML += '<tr class="odd-row">';
+    } else {
+      tableHTML += '<tr>';
+    }
+    
+    odd = !odd;
+    
+    tableHTML += '<td>' + name + '</td><td class="num">' + shown + '%</td><td class="faint">based on</td><td class="num">' + count + '</td><td class="faint">questions</td></tr>';
     
     if (value >= 0.175) {
       addWords(words, WORDS[name]['hi']);
@@ -246,7 +255,8 @@ function buildResults () {
 }
 
 $('#answer').click(function(e){
-  answerQuestion(2 * ((e.clientX - 8) / (207 - 8) - 0.5));
+  var result = 2 * (Math.max(0, (e.pageX - $('#answer').position().left) / 200) - 0.5);
+  answerQuestion(result);
 });
 
 $('#save-progress').click(function(e){
