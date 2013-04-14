@@ -243,7 +243,7 @@ function buildResults () {
     
     var shownName = name;
     
-    if (name == 'openness' || name == 'conscientousness' || name == 'extraversion' || name == 'assertiveness' || name == 'neuroticism') {
+    if (name == 'openness' || name == 'conscientousness' || name == 'extraversion' || name == 'agreeableness' || name == 'neuroticism') {
       shownName = '<strong>' + name + '</strong>';
     }
     
