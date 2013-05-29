@@ -14,6 +14,13 @@
     .gray-background {
       background-color: gray;
     }
+    
+    .explanation {
+      background-color: #eee;
+      padding: 1em;
+      margin-bottom: 1em;
+      box-shadow: 1px 1px 1px black;
+    }
   </style>
 </head>
 <body>
@@ -21,6 +28,13 @@
     <h1>Skill analysis</h1>
     <p id="skill-description"></p>
     <div id="selection-div">
+      <div class="explanation">
+        <p>In this quiz, you will compare your abilities with the rest of the population.</p>
+        <p>For example, one question might be, "I am strong, and can lift much weight."  In response to this question, click on a point on the curve that represents how well you demonstrate that trait compared to the average person.</p>
+        <p>If you are stronger than 60% of people (meaning you are in the top 40%), you would click on a point on the curve to the right of the peak.  The text below the graph would say, "Top 40%."  The blue portion of the graph represents the portion of the population below that point, while the black portion represents the portion of the population above that point.</p>
+        <p>After clicking on a point, the graph will flash green, and then become blue again, at which point a new question will appear for you to answer.  You will be notified when the quiz is over.</p>
+        <p>Thank you!</p>
+      </div>
       <canvas class="gray-background" id="graph-canvas">Your browser does not support canvas; this survey cannot be completed.</canvas>
       <p id="percentile-description"></p>
     </div>
@@ -131,7 +145,7 @@
     
     function submitResults () {
       $.ajax({
-        url: 'http://alecrn.xen.prgmr.com/collection/index.php',
+        url: 'http://alecrn.xen.prgmr.com/collections/index.php',
         type: 'POST',
         data: {
           command: 'submit',
@@ -155,7 +169,7 @@
       ['stamina', 'I can endure exertion for long periods of time.'],
       ['intelligence', 'I am intelligent, easily learning new things.'],
       ['street smarts', 'I am "street smart," keeping a cool-head and remaining stable in most situations.'],
-      ['attractive', 'I am physically attractive.',
+      ['attractive', 'I am physically attractive.'],
       ['balance', 'I am well-coordinated and well-balanced.'],
       ['bluff', 'I can lie well, talented at persuading others.'],
       ['climb', 'I am good at climbing.'],
