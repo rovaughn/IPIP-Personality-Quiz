@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>PCA for DnD</title>
+  <style>
+    .centered {
+      margin: auto;
+    }
+    
+    .full-width {
+      width: 50em;
+    }
+    
+    .gray-background {
+      background-color: gray;
+    }
+  </style>
+</head>
+<body>
+  <div class="centered full-width">
+    <h1>Skill analysis</h1>
+    <p id="skill-description"></p>
+    <div id="selection-div">
+      <canvas class="gray-background" id="graph-canvas">Your browser does not support canvas; this survey cannot be completed.</canvas>
+      <p id="percentile-description"></p>
+    </div>
+  </div>
+  <script src="jquery.js"></script>
+  <script>
+    var SQRT2PI = Math.sqrt(2 * Math.PI),
+        GRANULE = 0.03,
+        SPREAD  = 3,
+        HEIGHT  = 150,
+        GRAPHC  = $('#graph-canvas')[0],
+        GRAPHX  = GRAPHC.getContext('2d');
+    
+    GRAPHC.width  = SPREAD/GRANULE*2;
+    GRAPHC.height = HEIGHT;
+    
+    function pdf (x) {
+      return Math.exp(-x*x/2) / SQRT2PI;
+    }
+    
+    function cdf (x) {
+      var total = 0;
+      
+      for (var i = -SPREAD; i <= x; i += GRANULE) {
+        total += pdf(i);
+      }
+      
+      return total * GRANULE;
+    }
+    
+    var HOVER_COLOR   = 'blue',
+        CLICK_COLOR   = 'green',
+        OTHER_COLOR   = 'black',
+        CLICKED       = false,
+        CLICK_WAIT    = 1000/10,
+        CURRENT_SKILL = null,
+        CURRENT_INDEX = 0,
+        QUESTIONS     = null,
+        RESULTS       = {}
+    
+    function drawCurve (n) {
+      GRAPHX.fillStyle = CLICKED ? CLICK_COLOR : HOVER_COLOR;
+      
+      for (var i = 0; i < SPREAD/GRANULE*2; ++i) {
+        if (i == n) GRAPHX.fillStyle = OTHER_COLOR;
+        
+        var x = i*GRANULE - SPREAD,
+            p = pdf(x),
+            h = Math.round(p * HEIGHT);
+        
+        GRAPHX.fillRect(i, HEIGHT - h, 1, h);
+      }
+      
+      var percentile = Math.round(100*(1 - cdf(n*GRANULE - SPREAD)));
+      
+      $('#percentile-description').text('Top ' + percentile +'%');
+    }
+    
+    $(GRAPHC).mousemove(function(e){
+      if (CLICKED) return;
+      
+      drawCurve(e.clientX - $(this).offset().left);
+    });
+    
+    $(GRAPHC).click(function(e){
+      if (CLICKED) return;
+      
+      CLICKED = true;
+      
+      var x = e.clientX - $(this).offset().left;
+      
+      drawCurve(x);
+      
+      recordClick(x);
+      
+      setTimeout(function(){
+        CLICKED = false;
+        drawCurve(x);
+      }, CLICK_WAIT);
+    });
+    
+    function recordClick (x) {
+      RESULTS[CURRENT_SKILL] = x;
+      CURRENT_INDEX += 1;
+      askNextQuestion();
+    }
+    
+    function askNextQuestion () {
+      if (CURRENT_INDEX == QUESTIONS.length) {
+        $('#skill-description').text('The quiz is done.  Thank you.');
+        $('#selection-div').hide();
+        submitResults();
+        return;
+      }
+      
+      var q     = QUESTIONS[CURRENT_INDEX],
+          skill = q[0],
+          text  = q[1];
+      
+      CURRENT_SKILL = skill;
+      $('#skill-description').text('(' + (CURRENT_INDEX + 1) + ' out of ' + QUESTIONS.length + ') ' + text);
+    }
+    
+    function shuffle (o) {
+      for (var j, x, i = o.length; i; j = parseInt(Math.random()*i), x = o[--i], o[i] = o[j], o[j] = x){};
+      return o;
+    }
+    
+    function submitResults () {
+      $.ajax({
+        url: 'http://alecrn.xen.prgmr.com/collections/index.php',
+        type: 'POST',
+        data: {
+          command: 'submit',
+          survey:  'dndpca',
+          payload: JSON.stringify(RESULTS),
+        },
+        success: function(){
+          console.log(arguments);
+        },
+        failure: function(){
+          console.error(arguments);
+        },
+      });
+    }
+    
+    drawCurve(SPREAD/GRANULE);
+    
+    QUESTIONS = [
+      ['strength'    , 'How strong are you?'],
+      ['dexterity'   , 'How dextrous are you?'],
+      ['constitution', 'How constitutionary are you?'],
+      ['intelligence', 'How intelligent are you?'],
+      ['wisdom'      , 'How wise are you?'],
+      ['charisma'    , 'How charismatic are you?'],
+      ['fortitude'   , 'How fortuitous are you?'],
+      ['reflex'      , 'How reflexive are you?'],
+      ['will'        , 'How strongly-willed are you?'],
+      ['attack'      , 'How accurate are you?'],
+      ['hp'          , 'How much HP do you have?'],
+    ];
+    
+    shuffle(QUESTIONS);
+    
+    askNextQuestion();
+  </script>
+</body>
+</html>
