@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Acuity test</title>
+    <script src="jquery.js"></script>
+    <style>
+      .error {
+        color: #a00;
+      }
+      
+      .success {
+        color: #0a0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="graph-canvas">Your browser does not support canvas</canvas>
+    <p><input type="button" id="make-quiz" value="New quiz (timer begins)"></p>
+    <div id="quiz">
+      <canvas id="lines-canvas">Your browser does not support canvas</canvas>
+      <form id="questions">
+      </form>
+    </div>
+    <p>
+    <input type="button" id="save-progress" value="Make progress token">
+    <input type="button" id="load-progress" value="Load from progress token">
+    </p>
+    <textarea id="progress"></textarea>
+    <script>
+      var NUM_LINES     = 6,
+          LINE_SPACING  = 50,
+          LINE_OFFSET   = 5,
+          LENGTH_OFFSET = 100,
+          LENGTH_SCALE  = 50,
+          LINE_SKEW     = 0,
+          LENGTHS       = [],
+          BEGIN         = new Date,
+          MINUTE_GRAIN  = 20,
+          GRAPH_HEIGHT  = 60,
+          GRAPH_OFFSET  = 20,
+          BAR_WIDTH     = 5;
+      
+      function loadQuizData () {
+        if (!localStorage['quiz-data']) {
+          localStorage['quiz-data'] = JSON.stringify([]);
+        }
+        
+        return JSON.parse(localStorage['quiz-data']);
+      }
+      
+      function saveQuizData (quizData) {
+        localStorage['quiz-data'] = JSON.stringify(quizData);
+      }
+      
+      function quantile (points, x) {
+        return points[(points.length - 1)*x|0];
+      }
+      
+      function drawGraph () {
+        var canvas    = $('#graph-canvas')[0],
+            cx        = canvas.getContext('2d'),
+            numGrains = 24*60/MINUTE_GRAIN,
+            quizData  = loadQuizData();
+        
+        canvas.width  = (numGrains + 1)*BAR_WIDTH;
+        canvas.height = GRAPH_HEIGHT + GRAPH_OFFSET; 
+        
+        var largest = 0;
+        
+        for (var i = 0; i < numGrains; ++i) {
+          if (!quizData[i]) continue;
+          
+          for (var j = 0; j < quizData[i].length; ++j) {
+            var datum = quizData[i][j];
+            
+            if (datum > largest) {
+              largest = datum;
+            }
+          }
+        }
+        
+        cx.fillStyle = 'black';
+        cx.font = '11px arial';
+        cx.fillText('0', BAR_WIDTH*0*60/MINUTE_GRAIN, GRAPH_OFFSET-3);
+        cx.fillText('3', BAR_WIDTH*3*60/MINUTE_GRAIN, GRAPH_OFFSET-3);
+        cx.fillText('6', BAR_WIDTH*6*60/MINUTE_GRAIN, GRAPH_OFFSET-3);
+        cx.fillText('9', BAR_WIDTH*9*60/MINUTE_GRAIN, GRAPH_OFFSET-3);
+        cx.fillText('12', BAR_WIDTH*12*60/MINUTE_GRAIN, GRAPH_OFFSET-3);
+        cx.fillText('15', BAR_WIDTH*15*60/MINUTE_GRAIN, GRAPH_OFFSET-3);
+        cx.fillText('18', BAR_WIDTH*18*60/MINUTE_GRAIN, GRAPH_OFFSET-3);
+        cx.fillText('21', BAR_WIDTH*21*60/MINUTE_GRAIN, GRAPH_OFFSET-3);
+        
+        function drawBar (index, color, value) {
+          cx.fillStyle = color;
+          cx.fillRect(BAR_WIDTH*(index + 1), GRAPH_OFFSET, BAR_WIDTH, value/largest*GRAPH_HEIGHT);
+        }
+        
+        for (var i = 0; i < numGrains; ++i) {
+          var points = quizData[i];
+          
+          if (!points) continue;
+          
+          var q1 = quantile(points, 0.25),
+              q2 = quantile(points, 0.50),
+              q3 = quantile(points, 0.75),
+              q4 = quantile(points, 1.00);
+          
+          drawBar(i, '#cccccc', q4);
+          drawBar(i, '#aaaaaa', q3);
+          drawBar(i, '#777777', q2);
+          drawBar(i, '#000000', q1);
+        }
+      }
+      
+      function recordNewData (elapsed) {
+        var quizData = loadQuizData(),
+            grain    = Math.floor((BEGIN.getHours()*60 + BEGIN.getMinutes())/MINUTE_GRAIN);
+        
+        if (!quizData[grain]) {
+          quizData[grain] = [];
+        }
+        
+        quizData[grain].push(elapsed);
+        sorted(quizData[grain])
+        
+        saveQuizData(quizData);
+      }
+      
+      function sorted (a) {
+        return a.sort(function(a, b){ return a - b; });
+      }
+      
+      function makeLines () {
+        LENGTHS = [];
+        BEGIN   = new Date;
+        
+        var canvas = $('#lines-canvas')[0],
+            cx     = canvas.getContext('2d');
+        
+        canvas.width = LINE_OFFSET + LINE_SPACING*NUM_LINES + LINE_SKEW;
+        canvas.height = LENGTH_OFFSET + LENGTH_SCALE;
+        
+        cx.fillStyle = 'white';
+        cx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        for (var i = 0; i < NUM_LINES; ++i) {
+          var length;
+          
+          do {
+            length = Math.random()*LENGTH_SCALE|0;
+          } while (LENGTHS.indexOf(length) != -1);
+          
+          LENGTHS.push(length);
+          
+          var x = LINE_OFFSET + i*LINE_SPACING,
+              y = LENGTH_OFFSET + length;
+          
+          cx.fillStyle = 'black';
+          cx.fillRect(x, 0, 2, y);
+          cx.stroke();
+        }
+      }
+      
+      function makeQuestions () {
+        var form = $('#questions');
+        
+        form.html('');
+        
+        var p = $('<p>');
+        
+        p.text('Rank the lines from shortest (1) to longest (' + NUM_LINES + ').');
+        
+        form.append(p);
+        
+        var ol = $('<ol>');
+        
+        for (var i = 0; i < NUM_LINES; ++i) {
+          var li = $('<li>');
+          
+          for (var j = 0; j < NUM_LINES; ++j) {
+            var input = $('<input>');
+            
+            input.attr('type', 'radio');
+            input.attr('name', 'i' + i);
+            input.attr('value', j);
+            
+            li.append(input);
+          }
+          
+          ol.append(li);
+        }
+        
+        form.append(ol);
+        
+        var submit = $('<input>');
+        
+        submit.attr('type', 'button');
+        submit.attr('value', 'Submit');
+        
+        submit.click(submitQuiz);
+        
+        var message = $('<p>');
+        
+        message.attr('id', 'message');
+        
+        form.append(submit);
+        form.append(message);
+      }
+      
+      function submitQuiz () {
+        var form   = $('#questions'),
+            inputs = form[0],
+            values = new Array(NUM_LINES);
+            
+        for (var i = 0; i < NUM_LINES; ++i) {
+          for (var j = 0; j < NUM_LINES; ++j) {
+            var index  = i*NUM_LINES + j,
+                active = inputs[index].checked;
+            
+            if (active) {
+              if (values.indexOf(j) != -1) {
+                return displayError('One of the lines has the same rank as another.');
+              }
+              
+              values[i] = j;
+            }
+          }
+        }
+        
+        var prev = null;
+        
+        var sortedLengths = sorted(LENGTHS.slice()),
+            actualRanks   = [],
+            errors        = 0;
+        
+        for (var i = 0; i < NUM_LINES; ++i) {
+          var actualRank = LENGTHS.indexOf(sortedLengths[i]),
+              givenRank  = values[i];
+          
+          if (typeof givenRank == 'undefined') {
+            return displayError('No rank is given for ' + (i + 1) + '.');
+          }
+          
+          if (actualRank != givenRank) {
+            errors += 1;
+          }
+        }
+        
+        if (errors > 0) {
+          return displayError(errors + ' lines are misplaced.');
+        }
+        
+        var elapsed = Math.round((new Date - BEGIN)/100)/10;
+        
+        recordNewData(elapsed);
+        drawGraph();
+        
+        return displaySuccess('You are correct! Your score of ' + elapsed + ' seconds has been recorded.');
+      }
+      
+      function displayError (m) {
+        $('#message').addClass('error');
+        $('#message').removeClass('success');
+        $('#message').text(m);
+      }
+      
+      function displaySuccess (m) {
+        $('#message').removeClass('error');
+        $('#message').addClass('success');
+        $('#message').text(m);
+      }
+      
+      function makeQuiz () {
+        makeLines();
+        makeQuestions();
+      }
+      
+      drawGraph();
+      
+      $('#make-quiz').click(function(){
+        makeQuiz();
+      });
+      
+      $('#save-progress').click(function(){
+        $('#progress').val(JSON.stringify(loadQuizData()));
+      });
+      
+      $('#load-progress').click(function(){
+        saveQuizData(JSON.parse($('#progress').val()));
+        drawGraph();
+      });
+    </script>
+  </body>
+</html>
