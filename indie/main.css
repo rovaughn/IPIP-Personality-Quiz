@@ -1,0 +1,84 @@
+
+/* Golden ratio = (1 + sqrt 5)/2 =~= 1.618 */
+
+/* Sizes: Small  ()
+          Medium (260px-wide, 161px tall)
+          Large  ()
+*/
+
+body {
+  background-color: #333;
+  font-family: "Century Gothic", sans-serif;
+}
+
+.card {
+  display: block;
+  height: 141px;
+  width: 240px;
+  background-color: #eee;
+  margin: 10px;
+  box-shadow: 1px 1px 1px black;
+  position: relative;
+}
+
+.column {
+  float: left;
+  width: 280px;
+  background-color: #111;
+  margin: 10px;
+  border-radius: 5px;
+  box-shadow: inset 3px 3px black;
+}
+
+.drop {
+  min-height: 100px;
+  margin-bottom: 10px;
+}
+
+.column h1 {
+  background-color: #111;
+  color: white;
+  font-size: 20px;
+  margin: 20px;
+}
+
+.music-card {
+  text-align: center;
+  padding: 10px;
+  width: 240px;
+  height: 141px;
+  margin: 10px;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.music-card audio {
+  width: 240px;
+}
+
+.vertical-center {
+  display: table-cell;
+  vertical-align: middle;
+  height: 141px;
+}
+
+.proposal-card {
+  vertical-align: bottom;
+  padding: 10px;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.vertical-bottom {
+  position: absolute;
+  bottom: 10px;
+}
+
+.portfolio-card {
+  width: 260px;
+  height: 161px;
+}
